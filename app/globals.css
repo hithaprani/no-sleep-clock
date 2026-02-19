@@ -36,20 +36,34 @@ body {
   min-height: 100vh;
   min-height: 100dvh;
   position: relative;
-  display: flex;
-  align-items: stretch;
-  justify-content: center;
   background: #000;
   color: #fff;
+  padding: 10px;
   padding: max(10px, env(safe-area-inset-top))
     max(10px, env(safe-area-inset-right))
     max(10px, env(safe-area-inset-bottom))
     max(10px, env(safe-area-inset-left));
 }
 
+.clock-content {
+  position: relative;
+  width: 100%;
+  min-height: calc(100vh - 20px);
+  min-height: calc(100vh - max(20px, env(safe-area-inset-top) + env(safe-area-inset-bottom)));
+  min-height: calc(100dvh - max(20px, env(safe-area-inset-top) + env(safe-area-inset-bottom)));
+  animation: antiBurnInShift 12m steps(1, end) infinite;
+  will-change: transform;
+}
+
 .fullscreen-toggle {
   position: absolute;
+<<<<<<< codex/investigate-broken-ui-on-mobile-f3omql
+  top: 10px;
+  right: 10px;
+  top: max(10px, env(safe-area-inset-top));
+=======
   bottom: max(10px, env(safe-area-inset-bottom));
+>>>>>>> main
   right: max(10px, env(safe-area-inset-right));
   margin: 0;
   border: 1px solid rgba(255, 255, 255, 0.45);
@@ -59,6 +73,9 @@ body {
   line-height: 1;
   padding: 0.45rem 0.7rem;
   border-radius: 999px;
+<<<<<<< codex/investigate-broken-ui-on-mobile-f3omql
+  z-index: 3;
+=======
   z-index: 2;
 }
 
@@ -73,23 +90,31 @@ body {
   justify-items: center;
   animation: antiBurnInShift 12m steps(1, end) infinite;
   will-change: transform;
+>>>>>>> main
 }
 
 .clock-time {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  transform: translateY(-58%);
   margin: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.02em;
   text-align: center;
-  line-height: 0.88;
+  line-height: 0.9;
   font-weight: 700;
+<<<<<<< codex/investigate-broken-ui-on-mobile-f3omql
+  font-size: clamp(4.2rem, 24vw, 46vh);
+  letter-spacing: 0;
+=======
   font-size: clamp(4.2rem, 18vw, 46vh);
   letter-spacing: 0.005em;
+>>>>>>> main
   width: 100%;
-  max-width: 100%;
-  align-self: center;
-  flex-wrap: nowrap;
+  white-space: nowrap;
 }
 
 .clock-separator {
@@ -101,14 +126,16 @@ body {
   opacity: 0.15;
 }
 
-
 .clock-date {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 8px;
+  bottom: max(8px, env(safe-area-inset-bottom));
   margin: 0;
-  align-self: end;
   text-align: center;
-  font-size: clamp(1.2rem, 4.8vw, 2.8rem);
-  letter-spacing: 0.08em;
+  font-size: clamp(1.1rem, 4.6vw, 2.8rem);
+  letter-spacing: 0.06em;
   opacity: 0.95;
   width: 100%;
-  padding-bottom: 0.25rem;
 }
