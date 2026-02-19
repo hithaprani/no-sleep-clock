@@ -86,11 +86,6 @@ body {
   opacity: 0.15;
 }
 
-.clock-meridiem {
-  font-size: 0.58em;
-  margin-left: 0.08em;
-  text-transform: uppercase;
-}
 
 .clock-date {
   margin: 0;

@@ -83,7 +83,7 @@ export default function Home() {
     }
   }, [requestWakeLock]);
 
-  const { hour, minute, second, meridiem, blinkOn } = useMemo(() => {
+  const { hour, minute, second, blinkOn } = useMemo(() => {
     const hours24 = now.getHours();
     const hours12 = hours24 % 12 || 12;
 
@@ -91,7 +91,6 @@ export default function Home() {
       hour: String(hours12).padStart(2, "0"),
       minute: String(now.getMinutes()).padStart(2, "0"),
       second: String(now.getSeconds()).padStart(2, "0"),
-      meridiem: hours24 >= 12 ? "PM" : "AM",
       blinkOn: now.getSeconds() % 2 === 0,
     };
   }, [now]);
@@ -123,7 +122,6 @@ export default function Home() {
         <span>{minute}</span>
         <span className={`clock-separator${blinkOn ? "" : " is-dim"}`}>:</span>
         <span>{second}</span>
-        <span className="clock-meridiem">{meridiem}</span>
       </h1>
       <p className="clock-date">{dateText}</p>
     </main>
