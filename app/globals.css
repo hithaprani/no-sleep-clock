@@ -33,6 +33,7 @@ body {
 }
 
 .clock-screen {
+  min-height: 100vh;
   min-height: 100dvh;
   position: relative;
   display: flex;
@@ -48,7 +49,7 @@ body {
 
 .fullscreen-toggle {
   position: absolute;
-  top: max(10px, env(safe-area-inset-top));
+  bottom: max(10px, env(safe-area-inset-bottom));
   right: max(10px, env(safe-area-inset-right));
   margin: 0;
   border: 1px solid rgba(255, 255, 255, 0.45);
@@ -64,6 +65,7 @@ body {
 
 .clock-content {
   width: 100%;
+  min-height: calc(100vh - max(20px, env(safe-area-inset-top) + env(safe-area-inset-bottom)));
   min-height: calc(100dvh - max(20px, env(safe-area-inset-top) + env(safe-area-inset-bottom)));
   display: grid;
   grid-template-rows: 1fr auto;
@@ -82,7 +84,7 @@ body {
   text-align: center;
   line-height: 0.88;
   font-weight: 700;
-  font-size: clamp(4.2rem, 22vw, 46vh);
+  font-size: clamp(4.2rem, 18vw, 46vh);
   letter-spacing: 0.005em;
   width: 100%;
   max-width: 100%;
