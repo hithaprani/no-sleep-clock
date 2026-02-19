@@ -34,23 +34,56 @@ body {
 
 .clock-screen {
   min-height: 100vh;
-  min-height: 100dvh;
   position: relative;
+  display: flex;
   background: #000;
   color: #fff;
   padding: 10px;
-  padding: max(10px, env(safe-area-inset-top))
-    max(10px, env(safe-area-inset-right))
-    max(10px, env(safe-area-inset-bottom))
-    max(10px, env(safe-area-inset-left));
+}
+
+@supports (height: 100dvh) {
+  .clock-screen {
+    min-height: 100dvh;
+  }
+}
+
+@supports (padding: max(10px, env(safe-area-inset-top))) {
+  .clock-screen {
+    padding: max(10px, env(safe-area-inset-top))
+      max(10px, env(safe-area-inset-right))
+      max(10px, env(safe-area-inset-bottom))
+      max(10px, env(safe-area-inset-left));
+  }
 }
 
 .clock-content {
   position: relative;
   width: 100%;
   min-height: calc(100vh - 20px);
-  min-height: calc(100vh - max(20px, env(safe-area-inset-top) + env(safe-area-inset-bottom)));
-  min-height: calc(100dvh - max(20px, env(safe-area-inset-top) + env(safe-area-inset-bottom)));
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+@supports (height: 100dvh) {
+  .clock-content {
+    min-height: calc(100dvh - 20px);
+  }
+}
+
+@supports (min-height: calc(100vh - max(20px, env(safe-area-inset-top) + env(safe-area-inset-bottom)))) {
+  .clock-content {
+    min-height: calc(100vh - max(20px, env(safe-area-inset-top) + env(safe-area-inset-bottom)));
+  }
+}
+
+@supports (min-height: calc(100dvh - max(20px, env(safe-area-inset-top) + env(safe-area-inset-bottom)))) {
+  .clock-content {
+    min-height: calc(100dvh - max(20px, env(safe-area-inset-top) + env(safe-area-inset-bottom)));
+  }
+}
+
+.clock-content {
   animation: antiBurnInShift 12m steps(1, end) infinite;
   will-change: transform;
 }
@@ -73,11 +106,7 @@ body {
 }
 
 .clock-time {
-  position: absolute;
-  top: 50%;
-  left: 0;
-  right: 0;
-  transform: translateY(-58%);
+  position: relative;
   margin: 0;
   display: flex;
   align-items: center;
@@ -105,11 +134,16 @@ body {
   left: 0;
   right: 0;
   bottom: 8px;
-  bottom: max(8px, env(safe-area-inset-bottom));
   margin: 0;
   text-align: center;
   font-size: clamp(1.1rem, 4.6vw, 2.8rem);
   letter-spacing: 0.06em;
   opacity: 0.95;
   width: 100%;
+}
+
+@supports (bottom: max(8px, env(safe-area-inset-bottom))) {
+  .clock-date {
+    bottom: max(8px, env(safe-area-inset-bottom));
+  }
 }
