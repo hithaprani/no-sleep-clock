@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 type WakeLockSentinelLike = {
   release: () => Promise<void>;
@@ -15,6 +15,26 @@ type NavigatorWakeLock = Navigator & {
 
 export default function Home() {
   const [now, setNow] = useState(new Date());
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const wakeLockRef = useRef<WakeLockSentinelLike | null>(null);
+
+  const requestWakeLock = useCallback(async () => {
+    const nav = navigator as NavigatorWakeLock;
+
+    if (!nav.wakeLock?.request || wakeLockRef.current) {
+      return;
+    }
+
+    try {
+      const wakeLock = await nav.wakeLock.request("screen");
+      wakeLockRef.current = wakeLock;
+      wakeLock.addEventListener("release", () => {
+        wakeLockRef.current = null;
+      });
+    } catch {
+      // Some browsers require user interaction before wake lock can be requested.
+    }
+  }, []);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -27,51 +47,53 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    let wakeLock: WakeLockSentinelLike | null = null;
-
-    const requestWakeLock = async () => {
-      const nav = navigator as NavigatorWakeLock;
-
-      if (!nav.wakeLock?.request) {
-        return;
-      }
-
-      try {
-        wakeLock = await nav.wakeLock.request("screen");
-        wakeLock.addEventListener("release", () => {
-          wakeLock = null;
-        });
-      } catch {
-        // Some browsers require user interaction before wake lock can be requested.
-      }
-    };
-
     const handleVisibility = () => {
-      if (document.visibilityState === "visible" && !wakeLock) {
+      if (document.visibilityState === "visible" && !wakeLockRef.current) {
         void requestWakeLock();
       }
     };
 
+    const handleFullscreenChange = () => {
+      setIsFullscreen(Boolean(document.fullscreenElement));
+    };
+
     void requestWakeLock();
     document.addEventListener("visibilitychange", handleVisibility);
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
 
     return () => {
       document.removeEventListener("visibilitychange", handleVisibility);
-      if (wakeLock) {
-        void wakeLock.release();
+      document.removeEventListener("fullscreenchange", handleFullscreenChange);
+      if (wakeLockRef.current) {
+        void wakeLockRef.current.release();
       }
     };
-  }, []);
+  }, [requestWakeLock]);
 
-  const timeText = useMemo(
-    () =>
-      new Intl.DateTimeFormat("en-GB", {
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: true,
-      }).format(now),
-    [now],
-  );
+  const toggleFullscreen = useCallback(async () => {
+    try {
+      if (document.fullscreenElement) {
+        await document.exitFullscreen();
+      } else {
+        await document.documentElement.requestFullscreen();
+      }
+      await requestWakeLock();
+    } catch {
+      // Fullscreen is best-effort and can fail in unsupported contexts.
+    }
+  }, [requestWakeLock]);
+
+  const { hour, minute, second, blinkOn } = useMemo(() => {
+    const hours24 = now.getHours();
+    const hours12 = hours24 % 12 || 12;
+
+    return {
+      hour: String(hours12).padStart(2, "0"),
+      minute: String(now.getMinutes()).padStart(2, "0"),
+      second: String(now.getSeconds()).padStart(2, "0"),
+      blinkOn: now.getSeconds() % 2 === 0,
+    };
+  }, [now]);
 
   const dateText = useMemo(
     () =>
@@ -85,7 +107,22 @@ export default function Home() {
 
   return (
     <main className="clock-screen" aria-label="No sleep clock screen">
-      <h1 className="clock-time">{timeText}</h1>
+      <button
+        type="button"
+        className="fullscreen-toggle"
+        onClick={() => void toggleFullscreen()}
+        aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
+      >
+        {isFullscreen ? "Exit Fullscreen" : "Fullscreen"}
+      </button>
+
+      <h1 className="clock-time" aria-live="polite">
+        <span>{hour}</span>
+        <span className={`clock-separator${blinkOn ? "" : " is-dim"}`}>:</span>
+        <span>{minute}</span>
+        <span className={`clock-separator${blinkOn ? "" : " is-dim"}`}>:</span>
+        <span>{second}</span>
+      </h1>
       <p className="clock-date">{dateText}</p>
     </main>
   );

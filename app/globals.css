@@ -16,39 +16,84 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+@keyframes antiBurnInShift {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  25% {
+    transform: translate(4px, -3px);
+  }
+  50% {
+    transform: translate(-4px, 3px);
+  }
+  75% {
+    transform: translate(3px, 4px);
+  }
+}
+
 .clock-screen {
   min-height: 100dvh;
   display: grid;
-  grid-template-rows: 1fr auto;
+  grid-template-rows: auto 1fr auto;
   align-items: stretch;
   justify-items: center;
   background: #000;
   color: #fff;
-  padding: max(16px, env(safe-area-inset-top))
-    max(16px, env(safe-area-inset-right))
-    max(16px, env(safe-area-inset-bottom))
-    max(16px, env(safe-area-inset-left));
+  padding: max(10px, env(safe-area-inset-top))
+    max(10px, env(safe-area-inset-right))
+    max(10px, env(safe-area-inset-bottom))
+    max(10px, env(safe-area-inset-left));
+  animation: antiBurnInShift 70s steps(1, end) infinite;
+  will-change: transform;
+}
+
+.fullscreen-toggle {
+  justify-self: end;
+  margin: 0;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  background: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  font-size: clamp(0.8rem, 2.3vw, 1rem);
+  line-height: 1;
+  padding: 0.45rem 0.7rem;
+  border-radius: 999px;
 }
 
 .clock-time {
   margin: 0;
-  display: grid;
-  place-items: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.02em;
   text-align: center;
-  line-height: 0.95;
+  line-height: 0.88;
   font-weight: 700;
-  font-size: clamp(3rem, 23vw, 23vh);
-  letter-spacing: 0.02em;
+  font-size: clamp(4.2rem, 22vw, 46vh);
+  letter-spacing: 0.005em;
   width: 100%;
+  max-width: 100%;
+  align-self: center;
+  flex-wrap: nowrap;
 }
+
+.clock-separator {
+  opacity: 1;
+  transition: opacity 120ms linear;
+}
+
+.clock-separator.is-dim {
+  opacity: 0.15;
+}
+
 
 .clock-date {
   margin: 0;
   align-self: end;
   text-align: center;
-  font-size: clamp(1rem, 4vw, 2.5rem);
+  font-size: clamp(1.2rem, 4.8vw, 2.8rem);
   letter-spacing: 0.08em;
   opacity: 0.95;
   width: 100%;
-  padding-bottom: 0.5rem;
+  padding-bottom: 0.25rem;
 }
