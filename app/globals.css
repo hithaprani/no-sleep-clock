@@ -57,13 +57,9 @@ body {
 
 .fullscreen-toggle {
   position: absolute;
-<<<<<<< codex/investigate-broken-ui-on-mobile-f3omql
   top: 10px;
   right: 10px;
   top: max(10px, env(safe-area-inset-top));
-=======
-  bottom: max(10px, env(safe-area-inset-bottom));
->>>>>>> main
   right: max(10px, env(safe-area-inset-right));
   margin: 0;
   border: 1px solid rgba(255, 255, 255, 0.45);
@@ -73,24 +69,7 @@ body {
   line-height: 1;
   padding: 0.45rem 0.7rem;
   border-radius: 999px;
-<<<<<<< codex/investigate-broken-ui-on-mobile-f3omql
   z-index: 3;
-=======
-  z-index: 2;
-}
-
-
-.clock-content {
-  width: 100%;
-  min-height: calc(100vh - max(20px, env(safe-area-inset-top) + env(safe-area-inset-bottom)));
-  min-height: calc(100dvh - max(20px, env(safe-area-inset-top) + env(safe-area-inset-bottom)));
-  display: grid;
-  grid-template-rows: 1fr auto;
-  align-items: stretch;
-  justify-items: center;
-  animation: antiBurnInShift 12m steps(1, end) infinite;
-  will-change: transform;
->>>>>>> main
 }
 
 .clock-time {
@@ -106,13 +85,8 @@ body {
   text-align: center;
   line-height: 0.9;
   font-weight: 700;
-<<<<<<< codex/investigate-broken-ui-on-mobile-f3omql
   font-size: clamp(4.2rem, 24vw, 46vh);
   letter-spacing: 0;
-=======
-  font-size: clamp(4.2rem, 18vw, 46vh);
-  letter-spacing: 0.005em;
->>>>>>> main
   width: 100%;
   white-space: nowrap;
 }
