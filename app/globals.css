@@ -44,8 +44,6 @@ body {
     max(10px, env(safe-area-inset-right))
     max(10px, env(safe-area-inset-bottom))
     max(10px, env(safe-area-inset-left));
-  animation: antiBurnInShift 70s steps(1, end) infinite;
-  will-change: transform;
 }
 
 .fullscreen-toggle {
@@ -58,6 +56,18 @@ body {
   line-height: 1;
   padding: 0.45rem 0.7rem;
   border-radius: 999px;
+}
+
+
+.clock-content {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  align-items: stretch;
+  justify-items: center;
+  animation: antiBurnInShift 12m steps(1, end) infinite;
+  will-change: transform;
 }
 
 .clock-time {

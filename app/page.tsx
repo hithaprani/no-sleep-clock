@@ -30,6 +30,10 @@ export default function Home() {
       wakeLockRef.current = wakeLock;
       wakeLock.addEventListener("release", () => {
         wakeLockRef.current = null;
+
+        if (document.visibilityState === "visible") {
+          void requestWakeLock();
+        }
       });
     } catch {
       // Some browsers require user interaction before wake lock can be requested.
@@ -97,33 +101,39 @@ export default function Home() {
 
   const dateText = useMemo(
     () =>
-      new Intl.DateTimeFormat("en-GB", {
+      `${new Intl.DateTimeFormat("en-GB", {
         day: "2-digit",
-        month: "2-digit",
+        month: "short",
         year: "numeric",
-      }).format(now),
+      }).format(now)} - ${new Intl.DateTimeFormat("en-GB", {
+        weekday: "long",
+      }).format(now)}`,
     [now],
   );
 
   return (
     <main className="clock-screen" aria-label="No sleep clock screen">
-      <button
-        type="button"
-        className="fullscreen-toggle"
-        onClick={() => void toggleFullscreen()}
-        aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
-      >
-        {isFullscreen ? "Exit Fullscreen" : "Fullscreen"}
-      </button>
+      {!isFullscreen && (
+        <button
+          type="button"
+          className="fullscreen-toggle"
+          onClick={() => void toggleFullscreen()}
+          aria-label="Enter fullscreen"
+        >
+          Fullscreen
+        </button>
+      )}
 
-      <h1 className="clock-time" aria-live="polite">
-        <span>{hour}</span>
-        <span className={`clock-separator${blinkOn ? "" : " is-dim"}`}>:</span>
-        <span>{minute}</span>
-        <span className={`clock-separator${blinkOn ? "" : " is-dim"}`}>:</span>
-        <span>{second}</span>
-      </h1>
-      <p className="clock-date">{dateText}</p>
+      <div className="clock-content">
+        <h1 className="clock-time" aria-live="polite">
+          <span>{hour}</span>
+          <span className={`clock-separator${blinkOn ? "" : " is-dim"}`}>:</span>
+          <span>{minute}</span>
+          <span className={`clock-separator${blinkOn ? "" : " is-dim"}`}>:</span>
+          <span>{second}</span>
+        </h1>
+        <p className="clock-date">{dateText}</p>
+      </div>
     </main>
   );
 }
