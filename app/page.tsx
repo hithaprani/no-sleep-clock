@@ -16,6 +16,7 @@ type NavigatorWakeLock = Navigator & {
 export default function Home() {
   const [now, setNow] = useState(new Date());
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [showFullscreenHint, setShowFullscreenHint] = useState(false);
   const wakeLockRef = useRef<WakeLockSentinelLike | null>(null);
 
   const requestWakeLock = useCallback(async () => {
@@ -87,6 +88,22 @@ export default function Home() {
     }
   }, [requestWakeLock]);
 
+
+  useEffect(() => {
+    if (isFullscreen) {
+      setShowFullscreenHint(false);
+      return;
+    }
+
+    const hintTimer = window.setTimeout(() => {
+      setShowFullscreenHint(true);
+    }, 5000);
+
+    return () => {
+      window.clearTimeout(hintTimer);
+    };
+  }, [isFullscreen]);
+
   const { hour, minute, second, blinkOn } = useMemo(() => {
     const hours24 = now.getHours();
     const hours12 = hours24 % 12 || 12;
@@ -122,6 +139,10 @@ export default function Home() {
         >
           Fullscreen
         </button>
+      )}
+
+      {!isFullscreen && showFullscreenHint && (
+        <p className="fullscreen-hint">Tap Fullscreen to allow browser fullscreen mode.</p>
       )}
 
       <div className="clock-content">

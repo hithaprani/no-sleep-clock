@@ -147,3 +147,22 @@ body {
     bottom: max(8px, env(safe-area-inset-bottom));
   }
 }
+
+.fullscreen-hint {
+  position: absolute;
+  top: 48px;
+  right: 10px;
+  margin: 0;
+  max-width: min(70vw, 300px);
+  text-align: right;
+  font-size: clamp(0.75rem, 2vw, 0.95rem);
+  color: rgba(255, 255, 255, 0.85);
+  z-index: 3;
+}
+
+@supports (top: max(48px, env(safe-area-inset-top) + 38px)) {
+  .fullscreen-hint {
+    top: max(48px, env(safe-area-inset-top) + 38px);
+    right: max(10px, env(safe-area-inset-right));
+  }
+}
