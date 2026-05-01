@@ -95,6 +95,7 @@ export default function Home() {
 
     const autoFullscreenTimer = window.setTimeout(() => {
       void toggleFullscreen();
+      console.log("going to full screen")
     }, 5000);
 
     return () => {
