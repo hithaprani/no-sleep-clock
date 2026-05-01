@@ -87,6 +87,21 @@ export default function Home() {
     }
   }, [requestWakeLock]);
 
+
+  useEffect(() => {
+    if (isFullscreen) {
+      return;
+    }
+
+    const autoFullscreenTimer = window.setTimeout(() => {
+      void toggleFullscreen();
+    }, 5000);
+
+    return () => {
+      window.clearTimeout(autoFullscreenTimer);
+    };
+  }, [isFullscreen, toggleFullscreen]);
+
   const { hour, minute, second, blinkOn } = useMemo(() => {
     const hours24 = now.getHours();
     const hours12 = hours24 % 12 || 12;
