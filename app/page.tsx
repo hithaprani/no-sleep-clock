@@ -13,6 +13,19 @@ type NavigatorWakeLock = Navigator & {
   };
 };
 
+type BatteryManagerLike = {
+  level: number;
+  charging: boolean;
+  addEventListener: (
+    event: "levelchange" | "chargingchange",
+    listener: () => void,
+  ) => void;
+  removeEventListener: (
+    event: "levelchange" | "chargingchange",
+    listener: () => void,
+  ) => void;
+};
+
 export default function Home() {
   const [now, setNow] = useState(new Date());
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -43,10 +56,10 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    let batteryRef: BatteryManager | null = null;
+    let batteryRef: BatteryManagerLike | null = null;
 
     const nav = navigator as Navigator & {
-      getBattery?: () => Promise<BatteryManager>;
+      getBattery?: () => Promise<BatteryManagerLike>;
     };
 
     if (!nav.getBattery) {
