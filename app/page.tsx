@@ -13,9 +13,24 @@ type NavigatorWakeLock = Navigator & {
   };
 };
 
+type BatteryManagerLike = {
+  level: number;
+  charging: boolean;
+  addEventListener: (
+    event: "levelchange" | "chargingchange",
+    listener: () => void,
+  ) => void;
+  removeEventListener: (
+    event: "levelchange" | "chargingchange",
+    listener: () => void,
+  ) => void;
+};
+
 export default function Home() {
   const [now, setNow] = useState(new Date());
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [batteryLevel, setBatteryLevel] = useState<number | null>(null);
+  const [batteryIsCharging, setBatteryIsCharging] = useState(false);
   const wakeLockRef = useRef<WakeLockSentinelLike | null>(null);
 
   const requestWakeLock = useCallback(async () => {
@@ -38,6 +53,41 @@ export default function Home() {
     } catch {
       // Some browsers require user interaction before wake lock can be requested.
     }
+  }, []);
+
+  useEffect(() => {
+    let batteryRef: BatteryManagerLike | null = null;
+
+    const nav = navigator as Navigator & {
+      getBattery?: () => Promise<BatteryManagerLike>;
+    };
+
+    if (!nav.getBattery) {
+      return;
+    }
+
+    const updateBattery = () => {
+      if (!batteryRef) {
+        return;
+      }
+      setBatteryLevel(Math.round(batteryRef.level * 100));
+      setBatteryIsCharging(batteryRef.charging);
+    };
+
+    void nav.getBattery().then((battery) => {
+      batteryRef = battery;
+      updateBattery();
+      battery.addEventListener("levelchange", updateBattery);
+      battery.addEventListener("chargingchange", updateBattery);
+    });
+
+    return () => {
+      if (!batteryRef) {
+        return;
+      }
+      batteryRef.removeEventListener("levelchange", updateBattery);
+      batteryRef.removeEventListener("chargingchange", updateBattery);
+    };
   }, []);
 
   useEffect(() => {
@@ -99,6 +149,8 @@ export default function Home() {
     };
   }, [now]);
 
+  const isEvenMinute = now.getMinutes() % 2 === 0;
+
   const dateText = useMemo(
     () =>
       `${new Intl.DateTimeFormat("en-GB", {
@@ -113,6 +165,20 @@ export default function Home() {
 
   return (
     <main className="clock-screen" aria-label="No sleep clock screen">
+      {batteryLevel !== null && (
+        <div
+          className={`battery-bar-track${isEvenMinute ? " is-top" : " is-bottom"}`}
+          aria-label={`Battery ${batteryLevel}%`}
+        >
+          <div
+            className={`battery-bar-fill${batteryIsCharging ? " is-charging" : ""}${
+              batteryLevel < 20 ? " is-low" : ""
+            }`}
+            style={{ width: `${batteryLevel}%` }}
+          />
+        </div>
+      )}
+
       {!isFullscreen && (
         <button
           type="button"
