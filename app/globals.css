@@ -69,6 +69,10 @@ body {
   background: #a9ff3f;
 }
 
+.battery-bar-fill.is-low {
+  background: #ff4d4d;
+}
+
 @supports (height: 100dvh) {
   .clock-screen {
     min-height: 100dvh;

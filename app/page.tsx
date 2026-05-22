@@ -171,7 +171,9 @@ export default function Home() {
           aria-label={`Battery ${batteryLevel}%`}
         >
           <div
-            className={`battery-bar-fill${batteryIsCharging ? " is-charging" : ""}`}
+            className={`battery-bar-fill${batteryIsCharging ? " is-charging" : ""}${
+              batteryLevel < 20 ? " is-low" : ""
+            }`}
             style={{ width: `${batteryLevel}%` }}
           />
         </div>
