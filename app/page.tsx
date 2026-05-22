@@ -16,6 +16,8 @@ type NavigatorWakeLock = Navigator & {
 export default function Home() {
   const [now, setNow] = useState(new Date());
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [batteryLevel, setBatteryLevel] = useState<number | null>(null);
+  const [batteryIsCharging, setBatteryIsCharging] = useState(false);
   const wakeLockRef = useRef<WakeLockSentinelLike | null>(null);
 
   const requestWakeLock = useCallback(async () => {
@@ -38,6 +40,41 @@ export default function Home() {
     } catch {
       // Some browsers require user interaction before wake lock can be requested.
     }
+  }, []);
+
+  useEffect(() => {
+    let batteryRef: BatteryManager | null = null;
+
+    const nav = navigator as Navigator & {
+      getBattery?: () => Promise<BatteryManager>;
+    };
+
+    if (!nav.getBattery) {
+      return;
+    }
+
+    const updateBattery = () => {
+      if (!batteryRef) {
+        return;
+      }
+      setBatteryLevel(Math.round(batteryRef.level * 100));
+      setBatteryIsCharging(batteryRef.charging);
+    };
+
+    void nav.getBattery().then((battery) => {
+      batteryRef = battery;
+      updateBattery();
+      battery.addEventListener("levelchange", updateBattery);
+      battery.addEventListener("chargingchange", updateBattery);
+    });
+
+    return () => {
+      if (!batteryRef) {
+        return;
+      }
+      batteryRef.removeEventListener("levelchange", updateBattery);
+      batteryRef.removeEventListener("chargingchange", updateBattery);
+    };
   }, []);
 
   useEffect(() => {
@@ -113,6 +150,15 @@ export default function Home() {
 
   return (
     <main className="clock-screen" aria-label="No sleep clock screen">
+      {batteryLevel !== null && (
+        <div className="battery-bar-track" aria-label={`Battery ${batteryLevel}%`}>
+          <div
+            className={`battery-bar-fill${batteryIsCharging ? " is-charging" : ""}`}
+            style={{ width: `${batteryLevel}%` }}
+          />
+        </div>
+      )}
+
       {!isFullscreen && (
         <button
           type="button"
