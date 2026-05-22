@@ -149,6 +149,8 @@ export default function Home() {
     };
   }, [now]);
 
+  const isEvenMinute = now.getMinutes() % 2 === 0;
+
   const dateText = useMemo(
     () =>
       `${new Intl.DateTimeFormat("en-GB", {
@@ -164,7 +166,10 @@ export default function Home() {
   return (
     <main className="clock-screen" aria-label="No sleep clock screen">
       {batteryLevel !== null && (
-        <div className="battery-bar-track" aria-label={`Battery ${batteryLevel}%`}>
+        <div
+          className={`battery-bar-track${isEvenMinute ? " is-top" : " is-bottom"}`}
+          aria-label={`Battery ${batteryLevel}%`}
+        >
           <div
             className={`battery-bar-fill${batteryIsCharging ? " is-charging" : ""}`}
             style={{ width: `${batteryLevel}%` }}

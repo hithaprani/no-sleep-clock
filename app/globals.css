@@ -43,13 +43,20 @@ body {
 
 .battery-bar-track {
   position: absolute;
-  top: 0;
   left: 0;
   width: 100%;
   height: 10px;
   background: rgba(255, 255, 255, 0.12);
   z-index: 2;
   animation: antiBurnInShift 12m steps(1, end) infinite;
+}
+
+.battery-bar-track.is-top {
+  top: 0;
+}
+
+.battery-bar-track.is-bottom {
+  bottom: 0;
 }
 
 .battery-bar-fill {
